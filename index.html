@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CampusConnect AI</title>
+<style>
+:root{--blue:#1767e8;--ink:#172b4d;--muted:#64748b;--line:#e2eaf5;--bg:#f4f7fc;--white:#fff}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;color:var(--ink);background:var(--bg)}
+header{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;padding:16px 5%;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}
+.logo{font-size:22px;font-weight:800;color:var(--blue)}nav{display:flex;gap:8px;flex-wrap:wrap}nav button{background:transparent;color:#38516f;padding:9px 11px}nav button.active,nav button:hover{background:#eaf2ff;color:var(--blue)}
+.hero{padding:28px 5%;display:flex;gap:22px;align-items:center;flex-wrap:wrap;background:linear-gradient(120deg,#e7f1ff,#e8faf2)}
+.hero-art{font-size:62px;background:#fff9;border-radius:18px;padding:18px}.hero-content{flex:1;min-width:250px}h1{font-size:27px;margin:0 0 10px}p{line-height:1.5}.muted{color:var(--muted)}
+select,input,textarea{font:inherit;padding:11px 12px;border:1px solid #d4deed;border-radius:9px;background:#fff;color:var(--ink);max-width:100%}
+button,.button{font:inherit;border:0;border-radius:9px;padding:11px 15px;background:var(--blue);color:#fff;cursor:pointer;text-decoration:none;display:inline-block}button:hover,.button:hover{background:#0d50bc}
+.shell{display:grid;grid-template-columns:225px minmax(0,1fr);min-height:70vh;background:#fff}.sidebar{padding:18px 12px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:5px}.sidebar button{text-align:left;background:transparent;color:#38516f}.sidebar button.active,.sidebar button:hover{background:#eaf2ff;color:var(--blue)}
+main{padding:26px;min-width:0}.view{display:none}.view.active{display:block}.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.card{background:#fbfdff;border:1px solid var(--line);border-radius:13px;padding:18px;min-height:140px}.card h3{margin:8px 0}.ico{font-size:26px}.card p{font-size:13px;color:var(--muted);margin-bottom:0}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.row input,.row select{flex:1;min-width:170px}.panel{padding:18px;border:1px solid var(--line);border-radius:12px;background:#fff;margin:14px 0}.rule-list,.issue-list{display:grid;gap:10px;margin-top:14px}.rule,.issue{border:1px solid var(--line);background:#fbfdff;padding:15px;border-radius:11px}.rule h3,.issue h3{font-size:15px;margin:0 0 6px}.rule p,.issue p{margin:0;color:var(--muted);font-size:13px}.tag{display:inline-block;margin-top:9px;border-radius:20px;background:#e7f7ef;color:#08734c;padding:4px 8px;font-size:11px}
+.pills{display:flex;gap:7px;flex-wrap:wrap;margin:14px 0}.pills button{background:#eef4fc;color:#365276;border:1px solid #dfe8f4;padding:8px 12px;font-size:13px}.pills button.active{background:var(--blue);color:white}
+.notice{padding:13px;background:#fff8e6;border:1px solid #f1dfa6;border-radius:10px;color:#755915;font-size:13px;margin-top:15px}.chat{background:#f4f3ff;border-color:#dfddff}.answer{white-space:pre-line;background:#fff;border:1px solid #e4e3fb;padding:13px;border-radius:9px;margin:12px 0;font-size:14px;min-height:48px}
+footer{text-align:center;padding:20px;color:#7b8ba2;font-size:12px}
+@media(max-width:850px){.shell{grid-template-columns:1fr}.sidebar{flex-direction:row;overflow:auto;border-right:0;border-bottom:1px solid var(--line)}.sidebar button{white-space:nowrap}.cards{grid-template-columns:repeat(2,minmax(0,1fr))}main{padding:18px}}
+@media(max-width:560px){header{position:static}.cards{grid-template-columns:1fr}.hero{padding:22px 5%}h1{font-size:23px}main{padding:14px}}
+</style>
+</head>
+<body>
+<header><div class="logo">🎓 CampusConnect AI</div><nav>
+<button class="topnav active" data-view="dashboard">Home</button><button class="topnav" data-view="navigator">Campus Navigator</button><button class="topnav" data-view="contacts">Contacts</button><button class="topnav" data-view="rules">Rules &amp; Regulations</button><button class="topnav" data-view="wifi">Wi-Fi Help</button><button class="topnav" data-view="events">Classes &amp; Events</button><button class="topnav" data-view="deadlines">Deadlines</button><button class="topnav" data-view="assistant">AI Assistant</button>
+</nav></header>
+<section class="hero"><div class="hero-art">🏫</div><div class="hero-content"><h1>Your Campus, Connected.</h1><p>One simple place for campus directions, student guidelines, IT help, contacts and study reminders.</p><div class="row"><label>City <select id="city"><option>Bhilai</option><option>Raipur</option><option>Other</option></select></label><label>College <select id="college"><option>IIT Bhilai</option><option>Shri Shankaracharya Technical Campus (SSTC)</option><option>Other college</option></select></label><button id="saveCollege">Set Campus</button></div><p id="selectionMessage" class="muted" aria-live="polite"></p></div></section>
+<div class="shell"><aside class="sidebar" aria-label="Main sections">
+<button class="active" data-view="dashboard">⌂ Dashboard</button><button data-view="navigator">⌖ Campus Navigator</button><button data-view="contacts">♧ Contact Directory</button><button data-view="rules">▤ Rules &amp; Regulations</button><button data-view="wifi">⌁ Wi-Fi &amp; Common Issues</button><button data-view="events">▦ Classes &amp; Events</button><button data-view="deadlines">◷ Assignment Deadlines</button><button data-view="assistant">✦ AI Assistant</button>
+</aside><main>
+<section class="view active" id="view-dashboard"><h1>Welcome to CampusConnect AI</h1><p class="muted">Choose a service to get started.</p><div class="cards">
+<article class="card"><div class="ico">⌖</div><h3>Campus Navigator</h3><p>Search for a building, hostel, library or other destination.</p><button data-view="navigator">Open Navigator</button></article>
+<article class="card"><div class="ico">♧</div><h3>Contact Directory</h3><p>Find the right office or support team for your question.</p><button data-view="contacts">View Contacts</button></article>
+<article class="card"><div class="ico">▤</div><h3>Rules &amp; Regulations</h3><p>Search academic, conduct, hostel, safety and IT guidelines.</p><button data-view="rules">Browse Rules</button></article>
+<article class="card"><div class="ico">⌁</div><h3>Wi-Fi &amp; Common Issues</h3><p>Find troubleshooting steps for internet and digital safety.</p><button data-view="wifi">Get Help</button></article>
+<article class="card"><div class="ico">▦</div><h3>Classes &amp; Events</h3><p>Keep a personal list of classes, meetings and campus events.</p><button data-view="events">View Events</button></article>
+<article class="card"><div class="ico">◷</div><h3>Assignment Deadlines</h3><p>Add assignment tasks and track them in this browser session.</p><button data-view="deadlines">Manage Deadlines</button></article></div>
+<div class="panel chat"><h2>✨ Ask Campus AI</h2><p class="muted">Demo assistant with helpful general answers. It is not connected to a live AI model or official college systems.</p><form id="chatForm" class="row"><input id="question" placeholder="Ask about Wi-Fi, rules, contacts, directions..." required><button>Ask</button></form><div id="chatAnswer" class="answer">Campus AI: Hi! Ask a campus question to get started.</div></div></section>
+
+<section class="view" id="view-navigator"><h1>⌖ Campus Navigator</h1><p class="muted">Use the full Campus Navigator website below. The other CampusConnect AI tabs remain available in the main navigation.</p><div style="width:100%;overflow:hidden;border:1px solid #dbe5f1;border-radius:16px;background:#fff;"><iframe title="Campus Navigator website" srcdoc="&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+  &lt;meta charset=&quot;UTF-8&quot;&gt;
+  &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+  &lt;title&gt;Campus Navigator | CampusConnect AI&lt;/title&gt;
+  &lt;script src=&quot;https://cdn.tailwindcss.com&quot;&gt;&lt;/script&gt;
+  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css&quot;&gt;
+  &lt;link href=&quot;https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap&quot; rel=&quot;stylesheet&quot;&gt;
+  &lt;script&gt;
+    tailwind.config = { theme: { extend: { fontFamily: { sans: [&#x27;Inter&#x27;,&#x27;sans-serif&#x27;] }, colors: { brand: {50:&#x27;#eff6ff&#x27;,100:&#x27;#dbeafe&#x27;,500:&#x27;#3b82f6&#x27;,600:&#x27;#2563eb&#x27;,700:&#x27;#1d4ed8&#x27;,800:&#x27;#1e40af&#x27;} } } } };
+  &lt;/script&gt;
+  &lt;style&gt;
+    body { font-family: Inter, sans-serif; background:#f1f5f9; }
+    .campus-grid { background-color:#f8fafc; background-image:linear-gradient(#dbeafe 1px,transparent 1px),linear-gradient(90deg,#dbeafe 1px,transparent 1px); background-size:28px 28px; }
+    .map-road { position:absolute; height:13px; background:#fff; border:1px solid #dbeafe; border-radius:20px; transform:rotate(-25deg); }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body class=&quot;min-h-screen text-slate-800&quot;&gt;
+  &lt;header class=&quot;bg-white border-b border-slate-200 sticky top-0 z-30&quot;&gt;
+    &lt;div class=&quot;max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between&quot;&gt;
+      &lt;a href=&quot;campusconnect_ai_dashboard.html&quot; class=&quot;flex items-center gap-3&quot;&gt;
+        &lt;span class=&quot;bg-brand-600 text-white p-2 rounded-xl shadow-sm&quot;&gt;&lt;i class=&quot;fa-solid fa-graduation-cap text-xl&quot;&gt;&lt;/i&gt;&lt;/span&gt;
+        &lt;span class=&quot;text-xl font-bold tracking-tight text-slate-900&quot;&gt;CampusConnect &lt;span class=&quot;text-brand-600&quot;&gt;AI&lt;/span&gt;&lt;/span&gt;
+      &lt;/a&gt;
+      &lt;nav class=&quot;hidden sm:flex items-center gap-6 text-sm font-medium text-slate-600&quot;&gt;
+        &lt;a href=&quot;campusconnect_ai_dashboard.html&quot; class=&quot;hover:text-brand-600&quot;&gt;Home&lt;/a&gt;
+        &lt;span class=&quot;text-brand-600 font-semibold border-b-2 border-brand-600 py-5&quot;&gt;Campus Navigator&lt;/span&gt;
+        &lt;a href=&quot;https://www.google.com/maps/search/?api=1&amp;query=IIT+Bhilai&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot; class=&quot;hover:text-brand-600&quot;&gt;Campus Map &lt;i class=&quot;fa-solid fa-arrow-up-right-from-square text-xs ml-1&quot;&gt;&lt;/i&gt;&lt;/a&gt;
+      &lt;/nav&gt;
+      &lt;a href=&quot;campusconnect_ai_dashboard.html&quot; class=&quot;text-sm font-semibold text-brand-600 hover:text-brand-800&quot;&gt;&lt;i class=&quot;fa-solid fa-arrow-left mr-2&quot;&gt;&lt;/i&gt;&lt;span class=&quot;hidden sm:inline&quot;&gt;Back to Home&lt;/span&gt;&lt;span class=&quot;sm:hidden&quot;&gt;Home&lt;/span&gt;&lt;/a&gt;
+    &lt;/div&gt;
+  &lt;/header&gt;
+
+  &lt;main class=&quot;max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8&quot;&gt;
+    &lt;section class=&quot;rounded-2xl bg-gradient-to-r from-blue-700 via-brand-600 to-sky-500 text-white p-6 sm:p-9 shadow-sm overflow-hidden relative&quot;&gt;
+      &lt;div class=&quot;relative z-10 max-w-2xl&quot;&gt;
+        &lt;div class=&quot;inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1.5 text-xs font-semibold mb-4&quot;&gt;&lt;i class=&quot;fa-solid fa-location-dot&quot;&gt;&lt;/i&gt; SMART CAMPUS DIRECTIONS&lt;/div&gt;
+        &lt;h1 class=&quot;text-3xl sm:text-4xl font-extrabold tracking-tight&quot;&gt;Find your way around campus&lt;/h1&gt;
+        &lt;p class=&quot;mt-3 text-blue-50 text-sm sm:text-base leading-relaxed&quot;&gt;Search for a campus destination and get directions through Google Maps. Choose a popular location below to get started.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;i class=&quot;fa-solid fa-map-location-dot absolute -right-3 -bottom-8 text-white/10 text-[190px]&quot;&gt;&lt;/i&gt;
+    &lt;/section&gt;
+
+    &lt;div class=&quot;grid grid-cols-1 lg:grid-cols-12 gap-6 mt-6 items-start&quot;&gt;
+      &lt;section class=&quot;lg:col-span-7 space-y-6&quot;&gt;
+        &lt;div class=&quot;bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-sm&quot;&gt;
+          &lt;div class=&quot;flex items-center gap-3 mb-5&quot;&gt;
+            &lt;div class=&quot;w-11 h-11 rounded-xl bg-brand-100 text-brand-600 flex items-center justify-center&quot;&gt;&lt;i class=&quot;fa-solid fa-route text-lg&quot;&gt;&lt;/i&gt;&lt;/div&gt;
+            &lt;div&gt;&lt;h2 class=&quot;font-bold text-lg text-slate-900&quot;&gt;Get Directions&lt;/h2&gt;&lt;p class=&quot;text-sm text-slate-500&quot;&gt;Starting point: IIT Bhilai&lt;/p&gt;&lt;/div&gt;
+          &lt;/div&gt;
+          &lt;form id=&quot;directionForm&quot; class=&quot;space-y-3&quot;&gt;
+            &lt;label for=&quot;destination&quot; class=&quot;block text-sm font-semibold text-slate-700&quot;&gt;Where do you want to go?&lt;/label&gt;
+            &lt;div class=&quot;flex flex-col sm:flex-row gap-3&quot;&gt;
+              &lt;div class=&quot;relative flex-1&quot;&gt;
+                &lt;i class=&quot;fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400&quot;&gt;&lt;/i&gt;
+                &lt;input id=&quot;destination&quot; name=&quot;destination&quot; type=&quot;text&quot; list=&quot;destinationSuggestions&quot; placeholder=&quot;e.g. Central Library, Hostel, Mess...&quot; class=&quot;w-full rounded-xl border border-slate-300 bg-slate-50 py-3 pl-11 pr-4 text-sm outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-100&quot; required&gt;
+                &lt;datalist id=&quot;destinationSuggestions&quot;&gt;
+                  &lt;option value=&quot;Central Library&quot;&gt;&lt;/option&gt;&lt;option value=&quot;Hostel&quot;&gt;&lt;/option&gt;&lt;option value=&quot;Mess&quot;&gt;&lt;/option&gt;&lt;option value=&quot;Academic Block&quot;&gt;&lt;/option&gt;&lt;option value=&quot;Main Gate&quot;&gt;&lt;/option&gt;&lt;option value=&quot;Sports Complex&quot;&gt;&lt;/option&gt;&lt;option value=&quot;Auditorium&quot;&gt;&lt;/option&gt;&lt;option value=&quot;Administrative Block&quot;&gt;&lt;/option&gt;
+                &lt;/datalist&gt;
+              &lt;/div&gt;
+              &lt;button type=&quot;submit&quot; class=&quot;rounded-xl bg-brand-600 hover:bg-brand-700 text-white px-5 py-3 text-sm font-semibold shadow-sm transition whitespace-nowrap&quot;&gt;&lt;i class=&quot;fa-solid fa-diamond-turn-right mr-2&quot;&gt;&lt;/i&gt;Get Directions&lt;/button&gt;
+            &lt;/div&gt;
+            &lt;p id=&quot;searchMessage&quot; class=&quot;hidden text-xs text-amber-700 bg-amber-50 border border-amber-100 rounded-lg p-3&quot;&gt;&lt;/p&gt;
+          &lt;/form&gt;
+          &lt;div class=&quot;mt-5 pt-5 border-t border-slate-100&quot;&gt;
+            &lt;p class=&quot;text-xs uppercase tracking-wider font-bold text-slate-500 mb-3&quot;&gt;Quick destinations&lt;/p&gt;
+            &lt;div class=&quot;grid grid-cols-2 sm:grid-cols-3 gap-3&quot;&gt;
+              &lt;button class=&quot;destination-btn rounded-xl border border-slate-200 p-3 text-left hover:border-brand-300 hover:bg-brand-50 transition&quot; data-destination=&quot;Central Library&quot;&gt;&lt;span class=&quot;w-9 h-9 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center mb-2&quot;&gt;&lt;i class=&quot;fa-solid fa-book-open&quot;&gt;&lt;/i&gt;&lt;/span&gt;&lt;span class=&quot;block text-sm font-semibold&quot;&gt;Library&lt;/span&gt;&lt;span class=&quot;text-xs text-slate-500&quot;&gt;Study &amp; reading&lt;/span&gt;&lt;/button&gt;
+              &lt;button class=&quot;destination-btn rounded-xl border border-slate-200 p-3 text-left hover:border-brand-300 hover:bg-brand-50 transition&quot; data-destination=&quot;Hostel&quot;&gt;&lt;span class=&quot;w-9 h-9 rounded-lg bg-violet-50 text-violet-600 flex items-center justify-center mb-2&quot;&gt;&lt;i class=&quot;fa-solid fa-bed&quot;&gt;&lt;/i&gt;&lt;/span&gt;&lt;span class=&quot;block text-sm font-semibold&quot;&gt;Hostel&lt;/span&gt;&lt;span class=&quot;text-xs text-slate-500&quot;&gt;Student residence&lt;/span&gt;&lt;/button&gt;
+              &lt;button class=&quot;destination-btn rounded-xl border border-slate-200 p-3 text-left hover:border-brand-300 hover:bg-brand-50 transition&quot; data-destination=&quot;Mess&quot;&gt;&lt;span class=&quot;w-9 h-9 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center mb-2&quot;&gt;&lt;i class=&quot;fa-solid fa-utensils&quot;&gt;&lt;/i&gt;&lt;/span&gt;&lt;span class=&quot;block text-sm font-semibold&quot;&gt;Mess&lt;/span&gt;&lt;span class=&quot;text-xs text-slate-500&quot;&gt;Dining area&lt;/span&gt;&lt;/button&gt;
+              &lt;button class=&quot;destination-btn rounded-xl border border-slate-200 p-3 text-left hover:border-brand-300 hover:bg-brand-50 transition&quot; data-destination=&quot;Academic Block&quot;&gt;&lt;span class=&quot;w-9 h-9 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center mb-2&quot;&gt;&lt;i class=&quot;fa-solid fa-building-columns&quot;&gt;&lt;/i&gt;&lt;/span&gt;&lt;span class=&quot;block text-sm font-semibold&quot;&gt;Academic Block&lt;/span&gt;&lt;span class=&quot;text-xs text-slate-500&quot;&gt;Classes &amp; labs&lt;/span&gt;&lt;/button&gt;
+              &lt;button class=&quot;destination-btn rounded-xl border border-slate-200 p-3 text-left hover:border-brand-300 hover:bg-brand-50 transition&quot; data-destination=&quot;Sports Complex&quot;&gt;&lt;span class=&quot;w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center mb-2&quot;&gt;&lt;i class=&quot;fa-solid fa-volleyball&quot;&gt;&lt;/i&gt;&lt;/span&gt;&lt;span class=&quot;block text-sm font-semibold&quot;&gt;Sports Complex&lt;/span&gt;&lt;span class=&quot;text-xs text-slate-500&quot;&gt;Sports facilities&lt;/span&gt;&lt;/button&gt;
+              &lt;button class=&quot;destination-btn rounded-xl border border-slate-200 p-3 text-left hover:border-brand-300 hover:bg-brand-50 transition&quot; data-destination=&quot;Main Gate&quot;&gt;&lt;span class=&quot;w-9 h-9 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center mb-2&quot;&gt;&lt;i class=&quot;fa-solid fa-door-open&quot;&gt;&lt;/i&gt;&lt;/span&gt;&lt;span class=&quot;block text-sm font-semibold&quot;&gt;Main Gate&lt;/span&gt;&lt;span class=&quot;text-xs text-slate-500&quot;&gt;Campus entrance&lt;/span&gt;&lt;/button&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;div class=&quot;bg-white rounded-2xl border border-slate-200 p-5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4&quot;&gt;
+          &lt;div class=&quot;flex items-center gap-3&quot;&gt;&lt;div class=&quot;w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center&quot;&gt;&lt;i class=&quot;fa-solid fa-map text-lg&quot;&gt;&lt;/i&gt;&lt;/div&gt;&lt;div&gt;&lt;h3 class=&quot;font-bold text-slate-900&quot;&gt;Explore the campus map&lt;/h3&gt;&lt;p class=&quot;text-sm text-slate-500&quot;&gt;Open IIT Bhilai in Google Maps.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
+          &lt;a href=&quot;https://www.google.com/maps/search/?api=1&amp;query=IIT+Bhilai&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot; class=&quot;inline-flex items-center justify-center rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-brand-600 hover:bg-brand-50 transition&quot;&gt;Open Campus Map &lt;i class=&quot;fa-solid fa-arrow-up-right-from-square ml-2 text-xs&quot;&gt;&lt;/i&gt;&lt;/a&gt;
+        &lt;/div&gt;
+      &lt;/section&gt;
+
+      &lt;aside class=&quot;lg:col-span-5 space-y-6&quot;&gt;
+        &lt;div class=&quot;bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden&quot;&gt;
+          &lt;div class=&quot;p-4 border-b border-slate-100 flex items-center justify-between&quot;&gt;&lt;div&gt;&lt;h2 class=&quot;font-bold text-slate-900&quot;&gt;Campus overview&lt;/h2&gt;&lt;p class=&quot;text-xs text-slate-500 mt-1&quot;&gt;Illustrative layout, not a surveyed campus map&lt;/p&gt;&lt;/div&gt;&lt;span class=&quot;text-xs font-semibold bg-blue-50 text-blue-700 px-2.5 py-1 rounded-full&quot;&gt;&lt;i class=&quot;fa-solid fa-location-dot mr-1&quot;&gt;&lt;/i&gt;IIT Bhilai&lt;/span&gt;&lt;/div&gt;
+          &lt;div class=&quot;campus-grid relative h-64 overflow-hidden&quot;&gt;
+            &lt;div class=&quot;map-road w-[120%] top-24 -left-8&quot;&gt;&lt;/div&gt;&lt;div class=&quot;map-road w-[120%] top-44 -left-10&quot; style=&quot;transform:rotate(18deg)&quot;&gt;&lt;/div&gt;&lt;div class=&quot;map-road w-[90%] top-8 left-10&quot; style=&quot;transform:rotate(70deg)&quot;&gt;&lt;/div&gt;
+            &lt;div class=&quot;absolute top-7 left-8 rounded-lg bg-white border border-slate-200 shadow-sm p-2 text-xs font-semibold&quot;&gt;&lt;i class=&quot;fa-solid fa-tree text-emerald-600 mr-1&quot;&gt;&lt;/i&gt;Green zone&lt;/div&gt;
+            &lt;div class=&quot;absolute top-16 right-8 rounded-xl bg-white border border-blue-200 shadow-sm p-3 text-center&quot;&gt;&lt;i class=&quot;fa-solid fa-building-columns text-brand-600 text-xl&quot;&gt;&lt;/i&gt;&lt;p class=&quot;text-xs font-semibold mt-1&quot;&gt;Academic Block&lt;/p&gt;&lt;/div&gt;
+            &lt;div class=&quot;absolute bottom-8 left-8 rounded-xl bg-white border border-indigo-200 shadow-sm p-3 text-center&quot;&gt;&lt;i class=&quot;fa-solid fa-book-open text-indigo-600 text-xl&quot;&gt;&lt;/i&gt;&lt;p class=&quot;text-xs font-semibold mt-1&quot;&gt;Library&lt;/p&gt;&lt;/div&gt;
+            &lt;div class=&quot;absolute bottom-7 right-8 rounded-xl bg-white border border-emerald-200 shadow-sm p-3 text-center&quot;&gt;&lt;i class=&quot;fa-solid fa-utensils text-emerald-600 text-xl&quot;&gt;&lt;/i&gt;&lt;p class=&quot;text-xs font-semibold mt-1&quot;&gt;Mess / Dining&lt;/p&gt;&lt;/div&gt;
+            &lt;div class=&quot;absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-brand-600 text-white border-4 border-white shadow-lg flex items-center justify-center&quot;&gt;&lt;i class=&quot;fa-solid fa-location-dot&quot;&gt;&lt;/i&gt;&lt;/div&gt;
+          &lt;/div&gt;
+          &lt;div class=&quot;p-4 bg-slate-50 text-xs text-slate-500 leading-relaxed&quot;&gt;&lt;i class=&quot;fa-solid fa-circle-info text-brand-600 mr-1&quot;&gt;&lt;/i&gt;For accurate paths and building pins, use Google Maps. Some internal campus locations may not have searchable map pins.&lt;/div&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;rounded-2xl bg-white border border-slate-200 p-5 shadow-sm&quot;&gt;
+          &lt;h3 class=&quot;font-bold text-slate-900 mb-3&quot;&gt;How to navigate&lt;/h3&gt;
+          &lt;div class=&quot;space-y-4&quot;&gt;
+            &lt;div class=&quot;flex gap-3&quot;&gt;&lt;span class=&quot;w-8 h-8 rounded-full bg-brand-50 text-brand-600 flex items-center justify-center font-bold text-sm shrink-0&quot;&gt;1&lt;/span&gt;&lt;div&gt;&lt;p class=&quot;text-sm font-semibold&quot;&gt;Enter a destination&lt;/p&gt;&lt;p class=&quot;text-xs text-slate-500 mt-1&quot;&gt;Type a building or choose one of the quick buttons.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
+            &lt;div class=&quot;flex gap-3&quot;&gt;&lt;span class=&quot;w-8 h-8 rounded-full bg-brand-50 text-brand-600 flex items-center justify-center font-bold text-sm shrink-0&quot;&gt;2&lt;/span&gt;&lt;div&gt;&lt;p class=&quot;text-sm font-semibold&quot;&gt;Open directions&lt;/p&gt;&lt;p class=&quot;text-xs text-slate-500 mt-1&quot;&gt;Google Maps opens with IIT Bhilai as the starting point.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
+            &lt;div class=&quot;flex gap-3&quot;&gt;&lt;span class=&quot;w-8 h-8 rounded-full bg-brand-50 text-brand-600 flex items-center justify-center font-bold text-sm shrink-0&quot;&gt;3&lt;/span&gt;&lt;div&gt;&lt;p class=&quot;text-sm font-semibold&quot;&gt;Check the exact pin&lt;/p&gt;&lt;p class=&quot;text-xs text-slate-500 mt-1&quot;&gt;Confirm the destination if Google Maps shows multiple matches.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/aside&gt;
+    &lt;/div&gt;
+    &lt;footer class=&quot;text-center text-xs text-slate-400 py-8&quot;&gt;© 2026 CampusConnect AI · Smart campus, simpler journeys.&lt;/footer&gt;
+  &lt;/main&gt;
+
+  &lt;script&gt;
+    const origin = &#x27;IIT Bhilai, Chhattisgarh, India&#x27;;
+    function openDirections(destination) {
+      const cleanDestination = destination.trim();
+      const message = document.getElementById(&#x27;searchMessage&#x27;);
+      if (!cleanDestination) {
+        document.getElementById(&#x27;destination&#x27;).focus();
+        return;
+      }
+      // Directions are handled by Google Maps; campus buildings may require a more exact pin/name.
+      const url = &#x27;https://www.google.com/maps/dir/?api=1&amp;origin=&#x27; +
+        encodeURIComponent(origin) + &#x27;&amp;destination=&#x27; + encodeURIComponent(cleanDestination + &#x27;, IIT Bhilai, Chhattisgarh, India&#x27;) +
+        &#x27;&amp;travelmode=walking&#x27;;
+      message.textContent = &#x27;Opening Google Maps for “&#x27; + cleanDestination + &#x27;”. If the building is not found, try its official name or a nearby landmark.&#x27;;
+      message.classList.remove(&#x27;hidden&#x27;);
+      window.open(url, &#x27;_blank&#x27;, &#x27;noopener,noreferrer&#x27;);
+    }
+    document.getElementById(&#x27;directionForm&#x27;).addEventListener(&#x27;submit&#x27;, function(event) {
+      event.preventDefault();
+      openDirections(document.getElementById(&#x27;destination&#x27;).value);
+    });
+    document.querySelectorAll(&#x27;.destination-btn&#x27;).forEach(function(button) {
+      button.addEventListener(&#x27;click&#x27;, function() {
+        const destination = button.dataset.destination;
+        document.getElementById(&#x27;destination&#x27;).value = destination;
+        openDirections(destination);
+      });
+    });
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;" style="display:block;width:100%;height:1250px;border:0;background:#f1f5f9;" loading="eager" allow="geolocation"></iframe></div></section>
+
+<section class="view" id="view-contacts"><h1>♧ Contact Directory</h1><p class="muted">Suggested points of contact. Replace these generic entries with verified college contacts before publishing.</p><div class="row"><input id="contactSearch" placeholder="Search office or issue..."></div><div class="cards" id="contactList">
+<article class="card contact" data-text="academic office registration course exam timetable"><div class="ico">🎓</div><h3>Academic Office</h3><p>Course registration, academic calendar, examination or timetable queries.</p></article>
+<article class="card contact" data-text="hostel warden room maintenance leave accommodation"><div class="ico">🏠</div><h3>Hostel Office / Warden</h3><p>Room allocation, hostel maintenance, leave procedures and residential concerns.</p></article>
+<article class="card contact" data-text="it network wifi internet account login"><div class="ico">💻</div><h3>IT / Network Support</h3><p>Campus Wi-Fi, account login, network access and technical problems.</p></article>
+<article class="card contact" data-text="library books borrowing opening hours"><div class="ico">📚</div><h3>Library</h3><p>Borrowing, renewals, study spaces and library access questions.</p></article>
+<article class="card contact" data-text="security emergency safety lost found"><div class="ico">🛡️</div><h3>Campus Security</h3><p>Safety concerns, access issues, lost-and-found and urgent assistance.</p></article>
+<article class="card contact" data-text="student affairs wellbeing clubs conduct grievance"><div class="ico">🤝</div><h3>Student Affairs</h3><p>Student activities, conduct concerns, clubs and general student support.</p></article></div><div class="notice">Official phone numbers and email addresses have not been supplied. Please verify and add them from your institution's official website.</div></section>
+
+<section class="view" id="view-rules"><h1>▤ Rules &amp; Regulations</h1><p class="muted">Search general student-guideline examples by keyword or category.</p><div class="row"><input id="ruleSearch" placeholder="Search attendance, ID card, hostel, Wi-Fi..."></div><div class="pills" id="rulePills"><button class="active" data-cat="all">All rules</button><button data-cat="academic">Academic</button><button data-cat="conduct">Conduct</button><button data-cat="hostel">Hostel</button><button data-cat="safety">Safety</button><button data-cat="digital">IT &amp; Internet</button></div><p id="ruleCount" class="muted"></p><div class="rule-list" id="ruleList">
+<article class="rule" data-category="academic" data-text="academic exams assignments deadlines plagiarism integrity"><h3>Academic integrity</h3><p>Submit your own work, cite sources and follow examination and plagiarism policies.</p><span class="tag">Academic</span></article>
+<article class="rule" data-category="academic" data-text="attendance classes lectures labs timetable"><h3>Classes and attendance</h3><p>Attend scheduled lectures, tutorials and practicals. Check your department's official attendance requirements.</p><span class="tag">Academic</span></article>
+<article class="rule" data-category="academic" data-text="id card identity campus entry library exam"><h3>Carry your student ID</h3><p>Keep your valid college ID available for campus entry, exams, library use and verification when required.</p><span class="tag">Academic</span></article>
+<article class="rule" data-category="conduct" data-text="respect behavior ragging bullying harassment discrimination discipline"><h3>Respect and student conduct</h3><p>Treat students, faculty and staff respectfully. Report bullying, harassment, discrimination or ragging through official channels.</p><span class="tag">Conduct</span></article>
+<article class="rule" data-category="conduct" data-text="cleanliness property damage littering campus facilities"><h3>Care for campus facilities</h3><p>Keep shared spaces clean, dispose of waste properly and do not damage college property.</p><span class="tag">Conduct</span></article>
+<article class="rule" data-category="hostel" data-text="hostel visitors timings warden entry exit quiet hours"><h3>Follow hostel procedures</h3><p>Follow approved entry/exit, visitor, quiet-hour and leave procedures. Confirm exact timings with the hostel office.</p><span class="tag">Hostel</span></article>
+<article class="rule" data-category="hostel" data-text="room safety cleanliness mess shared accommodation"><h3>Keep hostel spaces safe and tidy</h3><p>Maintain cleanliness, respect roommates' privacy and report maintenance or safety problems.</p><span class="tag">Hostel</span></article>
+<article class="rule" data-category="safety" data-text="emergency fire alarm security safety"><h3>Campus safety and emergencies</h3><p>Follow security instructions and evacuation signs. Report hazards and use official emergency contacts.</p><span class="tag">Safety</span></article>
+<article class="rule" data-category="safety" data-text="vehicles parking helmet traffic campus"><h3>Vehicle and parking safety</h3><p>Use designated parking areas and follow campus traffic signs and applicable road-safety requirements.</p><span class="tag">Safety</span></article>
+<article class="rule" data-category="digital" data-text="wifi internet cyber security password otp phishing network"><h3>Use campus IT responsibly</h3><p>Protect credentials, never share passwords or OTPs, avoid suspicious links and follow network-use policies.</p><span class="tag">IT &amp; Internet</span></article>
+<article class="rule" data-category="digital" data-text="computer lab software downloads unauthorized access data"><h3>Computer lab and device use</h3><p>Use lab equipment responsibly, avoid unauthorized access and follow software and data-handling instructions.</p><span class="tag">IT &amp; Internet</span></article>
+</div><div id="noRules" class="panel" style="display:none">No matching guidelines. Try another keyword or category.</div><div class="notice"><strong>Important:</strong> These are general examples, not verified official policy. Attendance percentages, curfews, fines and disciplinary requirements vary by institution. Check the current official handbook.</div></section>
+
+<section class="view" id="view-wifi"><h1>⌁ Wi-Fi &amp; Common Issues</h1><p class="muted">Search troubleshooting guides and expand a solution for details.</p><div class="row"><input id="issueSearch" placeholder="Search Wi-Fi, login, spam, phishing..."></div><div class="pills" id="issuePills"><button class="active" data-issue="all">All</button><button data-issue="wifi">Wi-Fi</button><button data-issue="account">Accounts</button><button data-issue="safety">Digital Safety</button><button data-issue="device">Device</button></div><div id="issueList" class="issue-list">
+<article class="issue" data-category="wifi" data-text="wifi internet not connecting weak signal network"><h3>📶 Wi-Fi won't connect</h3><p>Check Wi-Fi is enabled, reconnect to the correct campus network and move closer to an access point.</p><details><summary>Step-by-step solution</summary><ol><li>Turn Wi-Fi off and on again.</li><li>Forget the campus network and reconnect using the official credentials.</li><li>Open a browser in case a sign-in portal is required.</li><li>Restart your device. If several users are affected, report it to IT support.</li></ol></details></article>
+<article class="issue" data-category="account" data-text="login password account authentication portal"><h3>🔐 Campus login or password problem</h3><p>Check your username, keyboard language and account status.</p><details><summary>Step-by-step solution</summary><ol><li>Use the official campus login page only.</li><li>Check Caps Lock and username format.</li><li>Use the official password-reset process.</li><li>Never share your password or OTP with anyone.</li></ol></details></article>
+<article class="issue" data-category="safety" data-text="whatsapp spam suspicious links phishing messages fraud"><h3>🛡️ WhatsApp spam or suspicious links</h3><p>Don't click unexpected links or share personal information.</p><details><summary>What to do</summary><ol><li>Do not reply, pay, or share OTPs.</li><li>Block and report the account or message in the app.</li><li>Tell the group administrator if it happened in a campus group.</li><li>If credentials were entered, change them using the official service.</li></ol></details></article>
+<article class="issue" data-category="device" data-text="slow internet browser cache device restart connection"><h3>🧰 Internet is slow</h3><p>Test another website and compare with another device.</p><details><summary>Step-by-step solution</summary><ol><li>Pause large downloads and close unused apps.</li><li>Reconnect to Wi-Fi and test again.</li><li>Try another browser or device.</li><li>Share the time, location and error message with IT support.</li></ol></details></article>
+<article class="issue" data-category="wifi" data-text="connected no internet dns captive portal"><h3>🌐 Connected but no internet</h3><p>The network may require sign-in or may be experiencing an outage.</p><details><summary>Step-by-step solution</summary><ol><li>Open a browser and check for a sign-in page.</li><li>Disconnect and reconnect to the official network.</li><li>Check whether the same issue affects other devices.</li><li>Contact IT support if the problem continues.</li></ol></details></article>
+</div><div id="noIssues" class="panel" style="display:none">No matching issue found. Try another search.</div></section>
+
+<section class="view" id="view-events"><h1>▦ Classes &amp; Events</h1><p class="muted">Add your own class, club meeting or campus event. Entries stay in this page while it remains open.</p><form id="eventForm" class="panel"><div class="row"><input id="eventTitle" placeholder="Class or event name" required><input id="eventDate" type="date" required><input id="eventTime" type="time"><button>Add Event</button></div></form><div id="eventList" class="rule-list"><div class="panel muted">No events added yet.</div></div><div class="notice">This is a personal demo list; it is not synced to the college timetable or event calendar.</div></section>
+
+<section class="view" id="view-deadlines"><h1>◷ Assignment Deadlines</h1><p class="muted">Add assignments and mark them complete. This demo list is not connected to your learning portal.</p><form id="taskForm" class="panel"><div class="row"><input id="taskTitle" placeholder="Assignment or task" required><input id="taskDate" type="date" required><button>Add Deadline</button></div></form><div id="taskList" class="rule-list"><div class="panel muted">No deadlines added yet.</div></div><div class="notice">Always confirm official due dates on your course portal or with your instructor.</div></section>
+
+<section class="view" id="view-assistant"><h1>✦ Campus AI Assistant</h1><p class="muted">Ask a question about common campus topics. Responses are demo guidance, not official college advice.</p><div class="panel chat"><form id="chatForm2" class="row"><input id="question2" placeholder="Type your question..." required><button>Ask Campus AI</button></form><div id="chatAnswer2" class="answer">Campus AI: Ask me about Wi-Fi, rules, contacts, places, events or deadlines.</div></div></section>
+</main></div><footer>CampusConnect AI • Simple all-in-one prototype • Verify official campus information before relying on it.</footer>
+<script>
+const views=[...document.querySelectorAll('.view')];
+function showView(name){views.forEach(v=>v.classList.toggle('active',v.id==='view-'+name));document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===name));if(name==='rules')filterRules();if(name==='wifi')filterIssues();window.scrollTo({top:0,behavior:'smooth'});}
+document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>showView(b.dataset.view)));
+document.querySelectorAll('.topnav').forEach(b=>b.addEventListener('click',()=>showView(b.dataset.view)));
+document.getElementById('saveCollege').addEventListener('click',()=>{document.getElementById('selectionMessage').textContent='Selected: '+document.getElementById('college').value+', '+document.getElementById('city').value+'. Welcome to your campus!';});
+let activeRule='all';
+document.querySelectorAll('#rulePills button').forEach(b=>b.addEventListener('click',()=>{activeRule=b.dataset.cat;document.querySelectorAll('#rulePills button').forEach(x=>x.classList.toggle('active',x===b));filterRules();}));
+document.getElementById('ruleSearch').addEventListener('input',filterRules);
+function filterRules(){const q=document.getElementById('ruleSearch').value.toLowerCase().trim();let n=0;document.querySelectorAll('#ruleList .rule').forEach(r=>{const ok=(activeRule==='all'||r.dataset.category===activeRule)&&(r.innerText+' '+r.dataset.text).toLowerCase().includes(q);r.style.display=ok?'block':'none';if(ok)n++;});document.getElementById('ruleCount').textContent=n+' guideline'+(n===1?'':'s');document.getElementById('noRules').style.display=n?'none':'block';}
+let activeIssue='all';
+document.querySelectorAll('#issuePills button').forEach(b=>b.addEventListener('click',()=>{activeIssue=b.dataset.issue;document.querySelectorAll('#issuePills button').forEach(x=>x.classList.toggle('active',x===b));filterIssues();}));
+document.getElementById('issueSearch').addEventListener('input',filterIssues);
+function filterIssues(){const q=document.getElementById('issueSearch').value.toLowerCase().trim();let n=0;document.querySelectorAll('#issueList .issue').forEach(r=>{const ok=(activeIssue==='all'||r.dataset.category===activeIssue)&&(r.innerText+' '+r.dataset.text).toLowerCase().includes(q);r.style.display=ok?'block':'none';if(ok)n++;});document.getElementById('noIssues').style.display=n?'none':'block';}
+function openMap(destination){const college=document.getElementById('college').value;const city=document.getElementById('city').value;const query=encodeURIComponent(destination+', '+college+', '+city);window.open('https://www.google.com/maps/search/?api=1&query='+query,'_blank','noopener');}
+document.getElementById('mapForm').addEventListener('submit',e=>{e.preventDefault();const d=document.getElementById('destination').value.trim();if(d)openMap(d);});
+document.querySelectorAll('.dest').forEach(b=>b.addEventListener('click',()=>{document.getElementById('destination').value=b.dataset.dest;openMap(b.dataset.dest);}));
+function getAnswer(question){const q=question.toLowerCase();if(q.includes('wifi')||q.includes('wi-fi')||q.includes('internet'))return 'Try turning Wi-Fi off and on, reconnecting to the official campus network, and checking for a sign-in portal. If it continues, contact campus IT support.';if(q.includes('spam')||q.includes('whatsapp')||q.includes('phishing'))return 'Avoid suspicious links, never share passwords or OTPs, and use the app’s block/report features. Notify a group admin if needed.';if(q.includes('deadline')||q.includes('assignment'))return 'Check your course portal or ask your instructor for the official deadline. You can add a personal reminder in the Assignment Deadlines tab.';if(q.includes('contact')||q.includes('office'))return 'Academic issue: Academic Office. Wi-Fi/account issue: IT Support. Hostel issue: Hostel Office or warden. Add verified contact details before launch.';if(q.includes('rule')||q.includes('regulation')||q.includes('attendance')||q.includes('hostel'))return 'Open Rules & Regulations and use the category filters or search. These are general examples; confirm requirements in the official college handbook.';if(q.includes('library')||q.includes('hostel')||q.includes('direction')||q.includes('where'))return 'Open Campus Navigator, enter the destination and choose the Google Maps result that matches your campus.';if(q.includes('event')||q.includes('class'))return 'Open Classes & Events to add a personal event. This demo is not connected to an official timetable.';return 'I can offer general guidance on campus navigation, contacts, Wi-Fi, rules, events and deadlines. Check official college sources for verified information.';}
+function wireChat(formId,inputId,answerId){document.getElementById(formId).addEventListener('submit',e=>{e.preventDefault();const input=document.getElementById(inputId);const q=input.value.trim();if(!q)return;document.getElementById(answerId).textContent='You: '+q+'\\n\\nCampus AI (demo): '+getAnswer(q);input.value='';});}
+wireChat('chatForm','question','chatAnswer');wireChat('chatForm2','question2','chatAnswer2');
+function addEntry(formId,titleId,dateId,timeId,listId,kind){document.getElementById(formId).addEventListener('submit',e=>{e.preventDefault();const title=document.getElementById(titleId).value.trim(),date=document.getElementById(dateId).value,time=timeId?document.getElementById(timeId).value:'';const item=document.createElement('div');item.className='rule';const h=document.createElement('h3');h.textContent=title;const p=document.createElement('p');p.textContent=date+(time?' · '+time:'');const done=document.createElement('button');done.textContent=kind==='task'?'Mark complete':'Remove';done.style.marginTop='10px';done.addEventListener('click',()=>{if(kind==='task'&&done.textContent!=='Completed ✓'){done.textContent='Completed ✓';item.style.opacity='.6';h.style.textDecoration='line-through';}else item.remove();});item.append(h,p,done);const list=document.getElementById(listId);if(list.querySelector('.muted'))list.innerHTML='';list.append(item);e.target.reset();});}
+addEntry('eventForm','eventTitle','eventDate','eventTime','eventList','event');addEntry('taskForm','taskTitle','taskDate',null,'taskList','task');
+filterRules();filterIssues();
+</script></body></html>
